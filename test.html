@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고객리스트</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-image : url('../static/images/logo.png');
+            background-size : contain;
+            background-repeat : no-repeat;
+            background-position : 50% 170px;
+            
+        }
+        #modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 10; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+        #modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+            animation-name: animatetop;
+            animation-duration: 0.4s
+        }
+        @keyframes animatetop {
+            from {top: -300px; opacity: 0}
+            to {top: 0; opacity: 1}
+        }
+        table {
+            border-collapse: collapse;
+            width: calc(100% - 5rem);
+            margin: 1rem 2rem;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: center;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .photo-cell {
+            cursor: pointer;
+        }
+
+        .photo-cell img {
+            border-radius: 0.5rem;
+        }
+
+        .reservation-button {
+            width: 100%;
+            
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .back-button i {
+            margin-right: 0.5rem;
+        }
+
+        .table-title {
+            margin-left: 2rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        img:hover {
+            transform: scale(3);
+        }
+        .search-bar {
+            width: 500px;
+          }
+    </style>
+</head>
+<body>
+    <div class="flex justify-between items-center p-4">
+        <div class="back-button" onclick="history.back()">
+            <form action="{{ url_for('add_member') }}" method="post">
+                <button id="addmember" type="submit">고객등록</button>
+              </form>
+        </div>
+        <button onclick="location.href='/'" class="focus:outline-none mx-auto">
+            <img src="../static/images/logo.png" alt="SereneU logo" class="h-12">
+        </button>
+        <h1 class="text-xl font-bold invisible">고객리스트</h1> <!-- Invisible to maintain layout balance -->
+    </div>
+    <form action="/search">
+        <span id="test" style="margin-left: 39%;">
+          <label>
+            <input class="form-check-input" type="radio" name="flag" value="0" checked>
+            <label class="form-check-label" for="flexRadioDefault1">
+                이름검색
+            </label>
+          <label style="margin-left:100px;">
+            <input class="form-check-input" type="radio" name="flag" value="1">
+            <label class="form-check-label" for="flexRadioDefault1">
+                번호검색
+            </label>
+          </label>
+        </span>
+        <div class="mx-auto search-bar input-group mb-3">
+          <input name="search_param" type="text" class="form-control rounded-pill" placeholder="고객이름 검색" aria-label="Recipient's username" aria-describedby="button-addon2">
+          <div class="input-group-append">
+          </div>
+        </div>
+      </form>
+    <div class="table-title">고객리스트</div>
+    <table class="mx-auto">
+        <colgroup>
+            <col style="width:100px">
+            <col style="width:100px">
+            <col style="width:100px">
+            <col style="width:100px">
+            <col style="width:100px">
+            <col style="width:100px">
+            <col style="width:100px">
+        </colgroup>
+        <thead>
+            <tr>
+                <th class="w-customer-name">고객이름</th>
+                <th class="w-customer-phone">전화번호</th>
+                <th class="w-customer-photo">사진1</th>
+                <th class="w-customer-photo">before</th>
+                <th class="w-customer-photo">after</th>
+                <th class="w-customer-photo">예약날자</th>
+                <th class="w-reservation">예약</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if members %}
+                {% for member in members %}
+                    <tr>
+                        <td>{{ member.customer_name }}</td>
+                        <td>{{ member.customer_phone }}</td>
+                        <td>
+                                <div class="space-x-2 photo-cell">
+                                    {% if member.profile_img %}
+                                        <img src="../{{ member.profile_img }}" alt="Placeholder image of customer profile" class="w-16 h-16" onclick="openModal('{{ member.member_id }}','profile')" style="margin-left: 29%;">
+                                    {% else %}
+                                        <button onclick="openModal('{{ member.member_id }}','profile')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">파일 업로드</button>
+                                    {% endif %}
+                                </div>
+                        </td>
+                        <td>
+                            <div class="space-x-2 photo-cell">
+                                {% if member.before_img %}
+                                    <img src="../{{ member.before_img }}" alt="Placeholder image of customer profile" class="w-16 h-16 rounded" onclick="openModal('{{ member.member_id }}','before')"style="margin-left: 29%;">
+                                {% else %}
+                                    <button onclick="openModal('{{ member.member_id }}','before')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">파일 업로드</button>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="space-x-2 photo-cell">
+                                {% if member.after_img %}
+                                    <img src="../{{ member.after_img }}" alt="Placeholder image of customer profile" class="w-16 h-16 rounded" onclick="openModal('{{ member.member_id }}','after')"style="margin-left: 29%;">
+                                {% else %}
+                                    <button onclick="openModal('{{ member.member_id }}','after')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">파일 업로드</button>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>{{ member.max_visit_time }} {{ member.surgery_info }}</td>
+                        <td>
+                            <form action="/reservation">
+                                <input type="hidden" id="memberid" name="memberid" value="{{ member.member_id }}">
+                                <button type="submit" class="reservation-button bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700">
+                                예약하기
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                    <tr>
+                        <td colspan="4" style="text-align: center;"><p>해당 고객이 없습니다.</p></td>
+                    </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    <!-- The Modal -->
+    <div id="modal" class="modal">
+
+        <!-- Modal content -->
+        <form method="POST" enctype="multipart/form-data" action="/upload">
+        <input type="hidden" id="member_id" name="member_id" value="" >
+        <div id="modal-content" class="modal-content rounded shadow-lg">
+            <div class="mb-4">
+                <h1 class="text-lg font-bold mb-2">사진 첨부하기</h1>
+                <div class="border-t border-gray-300 my-3"></div>
+                <div class="mb-4">
+                    <fieldset>
+                        <legend class="text-gray-700 text-sm mb-2">사진 유형 선택:</legend>
+                        <label class="inline-flex items-center">
+                            <input type="radio" class="form-radio" name="categori" id="profile" value="profile">
+                            <span class="ml-2">프로필</span>
+                        </label>
+                        <label class="inline-flex items-center ml-6">
+                            <input type="radio" class="form-radio" name="categori" id="before" value="before">
+                            <span class="ml-2">before</span>
+                        </label>
+                        <label class="inline-flex items-center ml-6">
+                            <input type="radio" class="form-radio" name="categori" id="after" value="after">
+                            <span class="ml-2">after</span>
+                        </label>
+                    </fieldset>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm mb-2" for="file_upload">
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="file_upload" name="file" type="file" accept=".png, .jpg, .jpeg, .gif">
+                        <p class="text-xs mt-2">10MB이하의 이미지 파일만 첨부할 수 있습니다.</p>
+                        <p class="text-xs">(.png, .jpg, .jpeg, .gif)</p>
+                    </label>
+                </div>
+                <div class="flex items-center justify-between">
+                        <input type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" value="업로드">
+                    <button onclick="closeModal()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+                        취소
+                    </button>
+                </div>
+            </div>
+        </div>
+        </form>
+
+    </div>
+
+    </div>
+    <script>
+        
+        function goSurgical(memberid){
+            console.log(memberid)
+        }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+        function openModal(memberid,categori) {
+            console.log(memberid)
+            document.getElementById('modal').style.display = 'block';
+            const inputMember = document.getElementById('member_id');
+            inputMember.value = memberid;
+            console.log(inputMember.value)
+            document.getElementById(categori).checked = true
+        }
+    </script>
+</body>
+</html>
