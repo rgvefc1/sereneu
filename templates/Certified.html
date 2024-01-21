@@ -1,0 +1,47 @@
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <script>
+            alert("{{messages[-1]}}")
+        </script>
+    {% endif%}
+{% endwith %}
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이세희 전용 사이트 입니다.</title>
+ <style>
+    .container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        /* 다른 스타일을 적용할 수 있습니다. */
+        width: 300px; /* 원하는 너비 설정 */
+        height: 200px; /* 원하는 높이 설정 */
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        padding: 20px;
+    }
+    .back{
+        background-color:red;
+    }
+  </style>
+</head>
+<body>
+  <main class="main">
+    <div id="back">
+        <div class="container">
+            <form action="/sub" method="POST">
+                <h1>이사이트는 이세희 전용 사이트 입니다.</h1>
+                <label>비밀번호를 입력 해 주세요. </label>
+                <input type="password" id="pw" name ="pw">
+                <input type="submit" value="입장">
+            </form>
+        </div>
+    <div>
+  </main>
+</body>
+</html>

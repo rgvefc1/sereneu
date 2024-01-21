@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고객리스트</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        #modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 10; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+        #modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+            animation-name: animatetop;
+            animation-duration: 0.4s
+        }
+        @keyframes animatetop {
+            from {top: -300px; opacity: 0}
+            to {top: 0; opacity: 1}
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1><a href="/">SereneU</a></h1>
+    <table>
+        <thead>
+            <tr>
+                <th>고객이름</th>
+                <th>전화번호</th>
+                <th>사진</th>
+                <th>예약날자</th>
+                <th>예약</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if members %}
+                {% for member in members %}
+                    <tr>
+                        <td>{{ member.customer_name }}</td>
+                        <td>{{ member.customer_phone }}</td>
+                        <td>
+                            <button onclick="openModal('{{ member.member_id }}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">파일업로드</button>
+                        </td>
+                        <td></td>
+                        <td>
+                            <form action="/reservation">
+                                <input type="hidden" id="memberid" name="memberid" value="{{ member.member_id }}">
+                                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700" onclick ="goSurgical({{member.member_id}})" style="width:100px">
+                                예약하기
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                    <tr>
+                        <td colspan="3" style="text-align: center;"><p>해당 고객이 없습니다.</p></td>
+                    </tr>
+            {% endif %}
+
+                <!-- The Modal -->
+                <div id="modal" class="modal">
+
+                    <!-- Modal content -->
+                    <form method="POST" enctype="multipart/form-data" action="/upload">
+                    <input type="hidden" id="member_id" name="member_id" value="" >
+                    <div id="modal-content" class="modal-content rounded shadow-lg">
+                        <div class="mb-4">
+                            <h1 class="text-lg font-bold mb-2">사진 첨부하기</h1>
+                            <div class="border-t border-gray-300 my-3"></div>
+                            <div class="mb-4">
+                                <fieldset>
+                                    <legend class="text-gray-700 text-sm mb-2">사진 유형 선택:</legend>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" class="form-radio" name="categori" value="profile">
+                                        <span class="ml-2">프로필</span>
+                                    </label>
+                                    <label class="inline-flex items-center ml-6">
+                                        <input type="radio" class="form-radio" name="categori" value="before">
+                                        <span class="ml-2">before</span>
+                                    </label>
+                                    <label class="inline-flex items-center ml-6">
+                                        <input type="radio" class="form-radio" name="categori" value="after">
+                                        <span class="ml-2">after</span>
+                                    </label>
+                                </fieldset>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm mb-2" for="file_upload">
+                                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="file_upload" name="file" type="file" accept=".png, .jpg, .jpeg, .gif">
+                                    <p class="text-xs mt-2">10MB이하의 이미지 파일만 첨부할 수 있습니다.</p>
+                                    <p class="text-xs">(.png, .jpg, .jpeg, .gif)</p>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                    <input type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" value="업로드">
+                                <button onclick="closeModal()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+                                    취소
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+
+                </div>
+        </tbody>
+    </table>
+    <script>
+        function goSurgical(memberid){
+            console.log(memberid)
+        }
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+        function openModal(memberid) {
+            document.getElementById('modal').style.display = 'block';
+            const inputMember = document.getElementById('member_id');
+            inputMember.value = memberid;
+        }
+    </script>
+</body>
+</html>

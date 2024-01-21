@@ -1,0 +1,85 @@
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Product List with Red Close Button</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen bg-gray-200">
+    <!-- Modal -->
+    <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="my-modal">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <!-- Close button -->
+            <div class="flex justify-end">
+                <button class="text-red-500 bg-transparent hover:bg-red-200 hover:text-red-700 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" onclick="document.getElementById('my-modal').style.display='none'">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+            <!-- Modal content -->
+            <div class="mt-3 text-center">
+                <form>
+                    <div class="bg-white shadow-md rounded-md overflow-hidden">
+                        <label class="flex items-center p-4 border-b border-gray-200">
+                            <input type="radio" name="product" class="form-radio h-5 w-5 text-blue-600">
+                            <div class="ml-3">
+                                <h2 class="text-lg font-bold">세테크 관련상품 프리미엄케어</h2>
+                                <p class="text-gray-600">세테크 프리미엄 상자소 20000원</p>
+                                <p class="text-gray-900 font-bold">119,000원</p>
+                            </div>
+                        </label>
+                        <label class="flex items-center p-4 border-b border-gray-200">
+                            <input type="radio" name="product" class="form-radio h-5 w-5 text-blue-600">
+                            <div class="ml-3">
+                                <h2 class="text-lg font-bold">프리미엄상품 +프리미엄 클리너</h2>
+                                <p class="text-gray-900 font-bold">109,000원</p>
+                            </div>
+                        </label>
+                        <label class="flex items-center p-4 border-b border-gray-200">
+                            <input type="radio" name="product" class="form-radio h-5 w-5 text-blue-600">
+                            <div class="ml-3">
+                                <h2 class="text-lg font-bold">매직+ 관련상품 프리미엄케어</h2>
+                                <p class="text-gray-600">매직 프리미엄 상자소 20000원</p>
+                                <p class="text-gray-900 font-bold">119,000원</p>
+                            </div>
+                        </label>
+                        <label class="flex items-center p-4">
+                            <input type="radio" name="product" class="form-radio h-5 w-5 text-blue-600">
+                            <div class="ml-3">
+                                <h2 class="text-lg font-bold">리빙관련 프리미엄케어3년권</h2>
+                                <p class="text-gray-600">단품직 아마노소 가습</p>
+                                <p class="text-gray-600">리빙관련 프리미엄케어</p>
+                                <p class="text-gray-900 font-bold">150,000원</p>
+                                <p class="text-gray-500 line-through">190,000원</p>
+                                <p class="text-red-600">24% 1회가격266,000원 x 3회 198,000원 -> 이벤트가 15만원!</p>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:bg-blue-700">
+                            예약하기
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Close modal when clicking outside of the modal
+        window.onclick = function(event) {
+            let modal = document.getElementById('my-modal');
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

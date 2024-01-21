@@ -1,0 +1,262 @@
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <script>
+            alert("{{messages[-1]}}")
+        </script>
+    {% endif%}
+{% endwith %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고객리스트</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+            animation-name: animatetop;
+            animation-duration: 0.4s;
+        }
+        @keyframes animatetop {
+            from {top: -300px; opacity: 0}
+            to {top: 0; opacity: 1}
+        }
+        img:hover {
+            transform: scale(3);
+        }
+        .table-container {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .rounded-image {
+            border-radius: 0.375rem; /* This is 6px */
+        }
+        .text-center th {
+            text-align: center;
+        }
+        .text-center td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-center">
+    <div class="flex justify-between items-center bg-white py-4 px-8 shadow-md">
+        <div class="flex items-center space-x-4">
+            <form action="{{ url_for('scheduleview') }}" method="post">
+                <button id="schesule" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm">예약내역</button>
+            </form>
+        </div>
+        <button onclick="location.href='/'" class="focus:outline-none">
+            <img src="../static/images/logo.png" alt="Placeholder image for company logo" class="h-12">
+        </button>
+        <div>
+          
+                <button id="addmember" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm" onclick="newWindow()">고객등록</button>
+       
+        </div>
+    </div>
+
+    <div class="flex justify-center mt-8">
+        <form action="/search" class="w-full max-w-lg">
+            <div class="flex items-center space-x-4 mb-4 justify-center">
+                <label class="inline-flex items-center">
+                    <input type="radio" class="form-radio" name="flag" value="0" checked>
+                    <span class="ml-2">이름검색</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" class="form-radio" name="flag" value="1">
+                    <span class="ml-2">번호검색</span>
+                </label>
+            </div>
+            <div class="flex items-center border-b border-blue-500 py-2 justify-center">
+                <input name="search_param" class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="text" placeholder="고객이름 검색" aria-label="Full name">
+                <button class="flex-shrink-0 bg-blue-500 hover:bg-blue-700 border-blue-500 hover:border-blue-700 text-sm border-4 text-white py-1 px-2 rounded" type="submit">
+                    검색
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="flex flex-col mt-6">
+        <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full sm:px-6 lg:px-8">
+                <div class="table-container">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50 text-center">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">고객이름</th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">전화번호</th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">사진1</th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">BEFORE</th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">AFTER</th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">예약날자</th>
+                                <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">예약</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% if members %}
+                                {% for member in members %}
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">{{ member.customer_name }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">{{ member.customer_phone }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            {% if member.profile_img %}
+                                                <img src="../{{ member.profile_img }}" alt="Placeholder image of a document before update" class="h-10 w-10 rounded-image mx-auto" onclick="openModal('{{ member.member_id }}','profile')">
+                                            {% else %}
+                                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm" onclick="openModal('{{ member.member_id }}','profile')">파일 업로드</button>
+                                            {% endif %}
+                                            
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            {% if member.before_img %}
+                                                <img src="../{{ member.before_img }}" alt="Placeholder image of a document before update" class="h-10 w-10 rounded-image mx-auto" onclick="openModal('{{ member.member_id }}','before')">
+                                            {% else %}
+                                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm" onclick="openModal('{{ member.member_id }}','before')">파일 업로드</button>
+                                            {% endif %}
+                                            
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            {% if member.after_img %}
+                                                <img src="../{{ member.after_img }}" alt="Placeholder image of a document before update" class="h-10 w-10 rounded-image mx-auto" onclick="openModal('{{ member.member_id }}','after')">
+                                            {% else %}
+                                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm" onclick="openModal('{{ member.member_id }}','after')">파일 업로드</button>
+                                            {% endif %}
+                                        </td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ member.max_visit_time }}<br>{{ member.surgery_info }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <form action="/reservation">
+                                        <input type="hidden" id="memberid" name="memberid" value="{{ member.member_id }}">
+                                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm">예약하기</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                                    <tr>
+                                        <td colspan="7" style="text-align: center;"><p>해당 고객이 없습니다.</p></td>
+                                    </tr>
+                            {% endif %}
+                            <!-- Repeat for each customer -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="modal" class="modal">
+        <form id="myForm" method="POST" enctype="multipart/form-data" action="/upload" onsubmit="return validateForm()">
+        <input type="hidden" id="member_id" name="member_id" value="" >
+        <!-- Modal content -->
+        <div class="modal-content rounded shadow-lg" style="width: 50%;">
+            <div class="mb-4">
+                <h1 class="text-lg font-bold mb-2">사진 첨부하기</h1>
+                <div class="border-t border-gray-300 my-3"></div>
+                <div class="mb-4">
+                    <fieldset>
+                        <legend class="text-gray-700 text-sm mb-2">사진 유형 선택:</legend>
+                        <label class="inline-flex items-center">
+                            <input type="radio" class="form-radio" name="categori" id="profile" value="profile">
+                            <span class="ml-2">프로필</span>
+                        </label>
+                        <label class="inline-flex items-center ml-6">
+                            <input type="radio" class="form-radio" name="categori" id="before" value="before">
+                            <span class="ml-2">before</span>
+                        </label>
+                        <label class="inline-flex items-center ml-6">
+                            <input type="radio" class="form-radio" name="categori" id="after" value="after">
+                            <span class="ml-2">after</span>
+                        </label>
+                    </fieldset>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm mb-2" for="file_upload">
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="file_upload" name="file" type="file" accept=".png, .jpg, .jpeg, .gif">
+                        <p class="text-xs mt-2">10MB이하의 이미지 파일만 첨부할 수 있습니다.</p>
+                        <p class="text-xs">(.png, .jpg, .jpeg, .gif)</p>
+                    </label>
+                </div>
+                <div class="flex items-center justify-center">
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm" id="imgUpload">
+                        업로드
+                    </button>
+                    <button onclick="closeModal()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm ml-4" type="button">
+                        취소
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+    </div>
+
+    <script>
+        var imgUploadButton = document.getElementById("imgUpload");
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+        function openModal(memberid, categori) {
+            document.getElementById('modal').style.display = 'block';
+            const inputMember = document.getElementById('member_id');
+            inputMember.value = memberid;
+            document.getElementById(categori).checked = true;
+        }
+        function validateForm() {
+            var fileInput = document.getElementById("file_upload");
+            
+            if (fileInput.files.length === 0) {
+                alert("파일을 선택해 주세요.");
+                return false; // 폼 제출을 막습니다.
+            } else {
+                var fileSize = fileInput.files[0].size;
+                var maxSize = 10 * 1024 * 1024; // 10MB
+                
+                if (fileSize > maxSize) {
+                    alert("10MB 이하의 이미지 파일만 업로드 가능합니다.");
+                    return false; // 폼 제출을 막습니다.
+                } else {
+                    return true; // 유효성 검사 통과 시 폼 제출을 허용합니다.
+                }
+            }
+        }
+        function newWindow(){
+            var _width = '500';
+            var _height = '600';
+
+            // 가운데 위치를 계산
+            var _left = (window.screen.width - _width) / 2;
+            var _top = (window.screen.height - _height) / 2;
+
+            // 팝업 창 열기
+            var popup = window.open('/add_member', 'popup-test', 'width=' + _width + ', height=' + _height + ', left=' + _left + ', top=' + _top +', scrollbars=no');
+            popup.focus();
+
+        }
+    </script>
+</body>
+</html>

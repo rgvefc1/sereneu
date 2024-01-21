@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Scrapper</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+    <!-- jquery CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <style>
+    h1 {
+      text-align: center!important;
+      font-size: 90px!important;
+    }
+    h1 span:nth-child(1) {
+        color:#4285f4!important;
+    }
+    h1 span:nth-child(2) {
+        color:#ea4335!important;
+    }
+    h1 span:nth-child(3) {
+        color:#fbbc05!important;
+    }
+    h1 span:nth-child(4) {
+        color:#4285f4!important;
+    }
+    h1 span:nth-child(5) {
+        color:#34a853!important;
+    }
+    h1 span:nth-child(6) {
+        color:#ea4335!important;
+    }
+    .search-bar {
+      width: 390px!important;
+    }
+    .hov:hover{
+      cursor:pointer;
+      background-color:lightskyblue;
+    }
+
+
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1 id="mainHeight" style="margin-top: -18px;">
+      <span>S</span><span>e</span><span>r</span><span>e</span><span>n</span><span>e</span><span> U</span>
+    </h1>
+
+    <form>
+      <span id="test" style="margin-left: 14%;">
+        <label>
+          <input class="form-check-input" type="radio" id="flag" name="flag" value="0" checked>
+          <label class="form-check-label" for="flexRadioDefault1">
+              이름검색
+          </label>
+        <label style="margin-left:30px;">
+          <input class="form-check-input" type="radio" id="flag" name="flag" value="1">
+          <label class="form-check-label" for="flexRadioDefault1">
+              번호검색
+          </label>
+        </label>
+        <label style="margin-left:30px;">
+          <input type="button" value="고객등록" style="
+          margin-left: 95%;
+          background-color: blue;
+          color: white;
+          ">
+      </label>
+      </span>
+      <div class="mx-auto search-bar input-group mb-3">
+        <input id="search_param" name="search_param" type="text" class="form-control rounded-pill" placeholder="고객이름 검색" aria-label="Recipient's username" aria-describedby="button-addon2">
+        <div class="input-group-append">
+        </div>
+      </div>
+      <button class="form-control rounded-pill" style="background-color: lightskyblue;width: 390px;margin-left: 8%;" onclick="memberSearch();">
+        검색
+      </button>
+    </form>
+    <div class="flex flex-col mt-6" id="modal">
+      <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="inline-block min-w-full sm:px-6 lg:px-8">
+              <div class="table-container">
+                  <table class="min-w-full">
+                      <thead class="bg-gray-50 text-center">
+                          <tr>
+                            <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">고객이름</th>
+                            <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">전화번호</th>
+                            <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">성별</th>
+                          </tr>
+                      </thead>
+                      <tbody class="bg-white divide-y divide-gray-200" id="ajaxView">
+                        <!-- Repeat for each customer -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+  </main>
+</body>
+<script>
+  function memberSearch(){
+    flag = document.getElementById("flag").value
+    search_param = document.getElementById("search_param").value
+    event.preventDefault();
+    $.ajax({
+      url:"/selectMember",
+      type:'GET',
+      async:true,
+      data:{
+        flag:flag,
+        search_param:search_param 
+      },
+      contentType: "application/json",
+      success : function(data){
+        var parsedData = JSON.parse(data);
+        // 데이터 배열의 길이 출력
+        if (data && data.length > 0) {
+          var tableHtml = '';
+          parsedData.forEach(function(member){
+            tableHtml += '<tr class="hov" onclick="memberCheck(' + member.member_id + ', \'' + member.customer_name + '\', \'' + member.customer_phone + '\', \'' + member.gender + '\');">';
+            tableHtml += '<td class="px-6 py-4 whitespace-nowrap" style="text-align: center;">' + member.customer_name + '</td>';
+            tableHtml += '<td class="px-6 py-4 whitespace-nowrap" style="text-align: center;">' + member.customer_phone + '</td>';
+            tableHtml += '<td class="px-6 py-4 whitespace-nowrap" style="text-align: center;">' + member.gender + '</td>';
+            // 다른 필드들도 추가
+            tableHtml += '</tr>';
+          });
+          document.getElementById('ajaxView').innerHTML = tableHtml;
+          return false;
+        } else {
+          alert("Data not found");
+        }
+      },
+      fail:function(){
+      },
+      error: function (error) { // 'fail' 대신 'error'로 수정
+            alert("error");
+        }
+    });
+  }
+
+  function memberCheck(id,name,phone,gender){
+    opener.document.getElementById("member_id").value  = id;
+    opener.document.getElementById("member_name").innerText  = name;
+    opener.document.getElementById("member_phone").innerText  = phone;
+    opener.document.getElementById("member_gender").innerText  = gender;
+    self.close();
+  }
+</script>
+</html>

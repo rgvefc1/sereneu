@@ -1,0 +1,235 @@
+@charset "utf-8";
+
+​
+
+/*레이아웃 공통 부분*/
+
+/*전체 공백없애기*/
+
+* {
+
+margin: 0; 
+
+padding: 0; 
+
+}
+
+​
+
+/*글꼴*/ 
+
+body {
+
+text-align:center;
+
+font-family: Nanum, 돋움, dotum, Gotham, "Helvetica Neue", Helvetica, arial, sans-serif;
+
+color: #444;
+
+}
+
+​
+
+/*배경 이미지*/
+
+body {
+
+background: black  repeat-x center top; /*그림이 짧으므로 그림 아래 컬러 추출. 포지션은 center top*/ 
+background-image: url(../images/logo.png);
+
+}
+
+​
+
+/*로고부분 공백*/
+
+h1 {
+
+margin: 40px 0;
+
+}
+
+​
+
+​
+
+/*불렛없애기*/
+
+ul {
+
+list-style-type: none;
+
+}
+
+
+/*링크*/
+
+a {
+
+text-decoration: none;
+
+}
+
+
+
+/*상단 메뉴 mainNav*/
+
+.mainNav {
+
+height: 50px; 
+
+background: #046380;
+
+}
+
+.mainNav > ul {
+
+width: 1000px; 
+
+margin: 0 auto;
+
+overflow: hidden;
+
+}
+
+.mainNav > ul > li {
+
+float: left; 
+
+width: 250px;
+
+}
+
+.mainNav > ul > li:before {
+
+content: "|"; 
+
+color: #ccc;
+
+}
+
+.mainNav > ul > li:first-child:before {
+
+content: none;
+
+}
+
+.mainNav > ul > li > a {
+
+display: inline-block; 
+
+padding: 0 99px; 
+
+color: #ccc; 
+
+line-height: 50px; 
+
+}
+
+.mainNav > ul > li > a:hover, .mainNav > ul > li > a:focus {
+
+background-color: #333;
+
+}
+
+
+
+/*인덱스 페이지 이미지 위아래 공백*/
+
+.contents {
+
+margin-top: 30px;
+
+margin-bottom: 30px; 
+
+}
+
+
+/*서브 페이지 레이아웃 공통부분*/
+
+/*subBox*/
+
+.subBox p:first-child {
+
+text-align: right;
+
+font-size: 0.8em;
+
+}
+
+
+.subBox {
+
+width: 950px;
+
+background: #ffffff;
+
+margin: 0 auto;
+
+font-family: Nanum, 돋움, dotum, Gotham, "Helvetica Neue", Helvetica, arial, sans-serif;
+
+color: #444;
+
+padding: 30px;
+
+margin-top: 30px;
+
+}
+
+.subBox h2{
+
+margin-bottom:20px;
+
+font-size: 18px;
+
+font-weight: bold;
+
+line-height: 2.5em;
+
+margin-top: 20px;
+
+border-top: 1px dotted #6c6c6c;
+
+border-bottom: 1px dotted #6c6c6c;
+
+color:#1e61a8;
+
+text-align: left;
+
+}
+
+
+.subBox dl dd{
+
+margin-bottom: 30px;
+
+text-align: justify;
+
+line-height: 1.8em;
+
+} 
+
+.subBox dl dt{
+
+font-weight: bold;
+
+line-height: 1.8em;
+
+text-align: left;
+
+} 
+
+
+/*하단 footer*/
+
+.footer {
+
+padding: 20px 0;
+
+border-top: 1px solid #888888;
+
+font-size:0.8em;
+
+color: #c0c0c0;
+
+}
