@@ -1,7 +1,6 @@
 import datetime
 from flask import Flask, render_template, request, redirect , flash,jsonify
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
@@ -268,4 +267,4 @@ def upload_file():
         return redirect('/search')
 
 
-app.run(debug=True)
+app.run(host='0.0.0.0')
