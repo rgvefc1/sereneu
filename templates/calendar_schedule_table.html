@@ -54,7 +54,7 @@
   }
  
   #calendar-wrap {
-    margin-left: 200px;
+    
   }
  
   #calendar1 {
@@ -69,15 +69,7 @@
 </head>
 <body>
   <div id='wrap'>
-    <!-- 드래그 박스 -->    
-    <div id='external-events'>      
-      <h4>바로가기</h4>      
-      <div id='external-events-list'></div> 
-        <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'></div>
-        <form action="/member">
-          <input type="submit" class ="fc-event-main goto" style="width: 90%;" value="전체고객">
-        </form>
-    </div>
+    <form action="/member" id="goMember"></form>
     <!-- calendar 태그 -->
     <div id='calendar-wrap'>
       <div id='calendar1'></div>
@@ -86,17 +78,6 @@
   <script>
   (function(){
     $(function(){
-      // 드래그 박스 취득
-      var containerEl = $('#external-events-list')[0];
-      // 설정하기
-      new FullCalendar.Draggable(containerEl, {
-        itemSelector: '.fc-event',
-        eventData: function(eventEl) {
-          return {
-            title: eventEl.innerText.trim()
-          }
-        }
-      });
      // calendar element 취득
     var calendarEl = $('#calendar1')[0];
       // full-calendar 생성하기
@@ -104,7 +85,7 @@
         timeZone: 'asia/seoul',
         customButtons:{
             addCustomButton:{
-                text:"예약 추가하기",
+                text:"예약",
                 click: function(){
                   var _width = '500';
                   var _height = '600';
@@ -113,6 +94,12 @@
                   var _top = (window.screen.height - _height) / 2;
                   window.open('/surgeryForm?flag=0', 'popup-test', 'width=' + _width + ', height=' + _height + ', left=' + _left + ', top=' + _top +', scrollbars=no');
                 }
+            },
+            addViewAllUserButton:{
+              text:"전체고객",
+              click: function(){
+                document.getElementById('goMember').submit();
+              }
             } 
         },
         eventClick: function(info) {
@@ -134,7 +121,7 @@
         },
         // 해더에 표시할 툴바
         headerToolbar: {
-          left: 'prev,next today,addCustomButton',
+          left: 'prev,next today addCustomButton addViewAllUserButton',
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
         },
@@ -143,7 +130,6 @@
         editable: true, // 수정 가능
         eventDrop: function(info) {
           if (confirm("이예약을 " + info.event.start.toISOString() +"날짜로 수정하시겠습니까?")) {
-            console.log(info.event)
             update_date(info.event.id,info.event.start);
           }else{
             info.revert();
@@ -177,7 +163,6 @@
 
   // datetime 형식으로 포맷
   const formattedDatetime = dateObject.toISOString().slice(0, 19).replace("T", " ");
-    console.log(formattedDatetime);
     $.ajax({
       url:"/update_date",
       type:'GET',

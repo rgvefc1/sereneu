@@ -267,4 +267,5 @@ def upload_file():
         return redirect('/search')
 
 
-app.run(host='0.0.0.0')
+#app.run(host='0.0.0.0')
+app.run(debug=True)
