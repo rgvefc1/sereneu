@@ -61,14 +61,22 @@
     max-width: 1100px;
     margin: 0 auto;
   }
+  .goto:hover{
+    cursor:pointer;
+    background-color: lightskyblue;
+  }
 </style>
 </head>
 <body>
   <div id='wrap'>
-    <!-- 드래그 박스 -->
-    <div id='external-events'>
-      <h4>Draggable Events</h4>
-      <div id='external-events-list'></div>
+    <!-- 드래그 박스 -->    
+    <div id='external-events'>      
+      <h4>바로가기</h4>      
+      <div id='external-events-list'></div> 
+        <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'></div>
+        <form action="/member">
+          <input type="submit" class ="fc-event-main goto" style="width: 90%;" value="전체고객">
+        </form>
     </div>
     <!-- calendar 태그 -->
     <div id='calendar-wrap'>
@@ -187,6 +195,9 @@
           }
       });
   }
+  
+
+
 
 </script>
 </body>

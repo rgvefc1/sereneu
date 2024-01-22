@@ -19,7 +19,7 @@
 </head>
 <body>
 <!-- Modal -->
-<form action="/add_surgery" id="frm" name="frmSubmit">>
+<form action="/add_surgery" id="frm" name="frmSubmit">
     <div
       class=""
       id="example"
@@ -174,8 +174,31 @@
     }
 
     function reservation(){
-        document.getElementById("price").value = document.getElementById("price").value.replaceAll(",","");
-        document.getElementById("frm").submit();
+        member_id = document.getElementById('member_id').value;
+        categori = document.getElementById('categori').value;
+        price = document.getElementById('price').value.replaceAll(",","");
+        visit_time = document.getElementById('visit_time').value;
+
+        $.ajax({
+            url:"/add_surgery",
+            type:'GET',
+            async:true,
+            data:{
+                member_id:member_id,
+                categori:categori,
+                price:price,
+                visit_time:visit_time, 
+            },
+            contentType: "application/json",
+            success : function(data){
+                if(data.resultCheck){
+                    if (window.confirm('예약완료되었습니다.')){
+                        window.opener.location.reload();
+                        self.close();
+                    }
+                }
+            }
+        });
     }
     
     function modifySurgery(){

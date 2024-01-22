@@ -63,11 +63,7 @@
           </label>
         </label>
         <label style="margin-left:30px;">
-          <input type="button" value="고객등록" style="
-          margin-left: 95%;
-          background-color: blue;
-          color: white;
-          ">
+          <button id="addmember" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline text-sm" onclick="newWindow()">고객등록</button>
       </label>
       </span>
       <div class="mx-auto search-bar input-group mb-3">
@@ -149,5 +145,19 @@
     opener.document.getElementById("member_gender").innerText  = gender;
     self.close();
   }
+
+  function newWindow(){
+    var _width = '500';
+    var _height = '600';
+
+    // 가운데 위치를 계산
+    var _left = (window.screen.width - _width) / 2;
+    var _top = (window.screen.height - _height) / 2;
+
+    // 팝업 창 열기
+    var popup = window.open('/add_member', 'popup-test', 'width=' + _width + ', height=' + _height + ', left=' + _left + ', top=' + _top +', scrollbars=no');
+    popup.focus();
+
+}
 </script>
 </html>

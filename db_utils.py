@@ -4,10 +4,10 @@ import mysql.connector
 def connect():
     try:
         connection = mysql.connector.connect(
-            host='localhost',
-            user='root',
-            password='0000',
-            database='SERENEU'
+            host='sereneu.cpu406qi0df7.ap-northeast-2.rds.amazonaws.com',
+            user='admin',
+            password='awsk12023!',
+            database='sereneu'
         )
         return connection
     except mysql.connector.Error as error:
